@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -20,7 +21,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [ra, setRa] = useState("");
-
+  const router = useRouter();
   async function cadastrar() {
     if (!nome || !email || !senha || !ra) {
       Alert.alert("Atenção", "Preencha todos os campos!");
@@ -95,6 +96,11 @@ export default function Index() {
         <TouchableOpacity style={styles.botao} onPress={cadastrar}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=> router.back()}>
+          <Text>Voltar</Text>
+        </TouchableOpacity>
+
       </View>
     </KeyboardAvoidingView>
   );
@@ -141,6 +147,6 @@ const styles = StyleSheet.create({
   textoBotao: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 15,
   },
 });
