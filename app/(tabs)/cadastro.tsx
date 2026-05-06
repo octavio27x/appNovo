@@ -1,3 +1,4 @@
+// import pega arquivos de outas pastas
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -9,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 
 // Firebase
@@ -16,12 +18,15 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../banco/firebaseConfig";
 
-export default function Index() {
+// 🔹 Tela de cadastro 
+export default function Cadastro() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [ra, setRa] = useState("");
   const router = useRouter();
+
+  //função de alertos para erros comuns
   async function cadastrar() {
     if (!nome || !email || !senha || !ra) {
       Alert.alert("Atenção", "Preencha todos os campos!");
@@ -44,21 +49,30 @@ export default function Index() {
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
 
       // limpar campos
-      setNome("");
-      setEmail("");
-      setSenha("");
-      setRa("");
+      router.replace("/(tabs)/fullcalendar");
     } catch (error: any) {
-      Alert.alert("Erro", error.message);
+      if (error.code === "auth/email-already-in-use") {
+        Alert.alert("Erro", "Email já cadastrado");
+      } else if (error.code === "auth/weak-password") {
+        Alert.alert("Erro", "Senha deve ter no mínimo 6 caracteres");
+      } else {
+        Alert.alert("Erro", "Erro ao cadastrar");
+      }
     }
   }
 
+  //return é uma instrução usada dentro de funções para encerrar a execução e devolver um valor para quem chamou essa função.
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.form}>
+      //  <Image
+          // source={require("../../assets/logo.png")} // ajusta o caminho
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.titulo}>Criar conta</Text>
 
         <TextInput
@@ -97,8 +111,8 @@ export default function Index() {
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=> router.back()}>
-          <Text>Voltar</Text>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={styles.link}>VOLTAR</Text>
         </TouchableOpacity>
 
       </View>
@@ -106,18 +120,19 @@ export default function Index() {
   );
 }
 
+// 🔹 Estilos para a tela de cadastro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center", // 🔥 centraliza tudo
+    alignItems: "center",
     backgroundColor: "#fff",
     padding: 20,
   },
 
   form: {
     width: "100%",
-    maxWidth: 400, // 👈 padrão profissional
+    maxWidth: 400,
   },
 
   titulo: {
@@ -148,5 +163,27 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 15,
+  },
+
+  logo: {
+    width: 180,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+
+  link: {
+    color: "#00e5ff",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#00e5ff",
+    paddingBottom: 3,
+
+
+    textShadowColor: "#00e5ff",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
 });

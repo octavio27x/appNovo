@@ -1,45 +1,88 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Image, 
+  Alert,
+} from "react-native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../banco/firebaseConfig";
+
 
 export default function login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const router = useRouter();
+ 
+async function fazerLogin() {
+  if (!email || !senha) {
+    Alert.alert("Erro", "Preencha email e senha");
+    return; // 🔥 ISSO FALTAVA
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+
+    router.replace("/(tabs)/fullcalendar");
+
+  } catch (error) {
+    Alert.alert("Erro no login", "Email ou senha inválidos");
+  }
+}
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <View style={styles.form}>
-        <Text style={styles.titulo}>Login</Text>
+   <KeyboardAvoidingView
+  style={styles.container}
+  behavior={Platform.OS === "ios" ? "padding" : undefined}
+>
+  <View style={styles.form}>
 
-        <TextInput
-        style={styles.input}
-        placeholder="email"
-        value={email}
-        onChangeText={setEmail}
-        />
+    {/* 🔹 IMAGEM */}
+    <Image
+      //source={require("../assets/logo.png")} // troca pelo seu caminho
+      style={styles.logo}
+      resizeMode="contain"
+    />
 
-        <TextInput
-        style={styles.input}
-        placeholder="senha"
-        value={senha}
-        onChangeText={setSenha}
-        />
+    <Text style={styles.titulo}>Login</Text>
 
-        <TouchableOpacity style={styles.botao} onPress={login}>
-          <Text style={styles.textoBotao}>Login</Text>
-        </TouchableOpacity>
+    <TextInput
+      style={styles.input}
+      placeholder="email"
+      value={email}
+      onChangeText={setEmail}
+    />
 
-        <TouchableOpacity onPress={() => router.push("/cadastro")}>
-          <Text style={{color:"blue, marginTop 10 "}}>Me Cadastrar</Text>
-        </TouchableOpacity>
+    <TextInput
+      style={styles.input}
+      placeholder="senha"
+      value={senha}
+      onChangeText={setSenha}
+      secureTextEntry
+    />
 
-      </View>
-    </KeyboardAvoidingView>
+    {/* 🔹 BOTÃO LOGIN */}
+    <TouchableOpacity style={styles.botao} onPress={fazerLogin}>
+      <Text style={styles.textoBotao}>Login</Text>
+    </TouchableOpacity>
 
+    {/* 🔹 LINKS */}
+    <TouchableOpacity onPress={() => router.push("/cadastro")}>
+      <Text style={styles.link}>ME CADASTRAR</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity>
+      <Text style={styles.link}>ESQUECI SENHA</Text>
+    </TouchableOpacity>
+
+  </View>
+</KeyboardAvoidingView>
   );
 }
 
@@ -52,12 +95,13 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    width: "100%",
+    width: "90%",
     maxWidth: 400, // 👈 padrão profissional
   },
 
   titulo: {
-    fontSize: 30,
+    textAlign: "center",
+    fontSize: 50,
     fontWeight: 'bold'
   },
   
@@ -84,4 +128,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
+  logo: {
+  width: 180,
+  height: 100,
+  alignSelf: "center",
+  marginBottom: 20,
+},
+
+link: {
+  color: "#00e5ff", // 🔥 azul neon
+  fontWeight: "bold",
+  textAlign: "center",
+  marginTop: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: "#00e5ff",
+  paddingBottom: 3,
+},
 });
