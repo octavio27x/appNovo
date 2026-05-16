@@ -18,6 +18,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../banco/firebaseConfig";
 
+function senhaForte(senha: string) {
+  const regex = /^(?=.*[!@#$%]).{6,}$/;
+  return regex.test(senha);
+}
+
 // 🔹 Tela de cadastro 
 export default function Cadastro() {
   const [nome, setNome] = useState("");
@@ -25,11 +30,19 @@ export default function Cadastro() {
   const [senha, setSenha] = useState("");
   const [ra, setRa] = useState("");
   const router = useRouter();
+    const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [erroSenha, setErroSenha] = useState("");
+    const [erroEmail, setErroEmail] = useState("");
 
   //função de alertos para erros comuns
   async function cadastrar() {
     if (!nome || !email || !senha || !ra) {
       Alert.alert("Atenção", "Preencha todos os campos!");
+      return;
+    }
+
+    if (!senhaForte(senha)) {
+      Alert.alert("Atenção", "Senha deve conter pelo menos 6 caracteres e um dos seguintes símbolos: !@#$%");
       return;
     }
 
@@ -49,7 +62,7 @@ export default function Cadastro() {
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
 
       // limpar campos
-      router.replace("/(tabs)/fullcalendar");
+      router.replace("/pages/fullcalendar");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         Alert.alert("Erro", "Email já cadastrado");
