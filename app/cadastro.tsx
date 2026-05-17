@@ -9,14 +9,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  Image,
+  View
 } from "react-native";
 
 // Firebase
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../banco/firebaseConfig";
+import { auth, db } from "../banco/firebaseConfig";
 
 function senhaForte(senha: string) {
   const regex = /^(?=.*[!@#$%]).{6,}$/;
@@ -62,7 +61,7 @@ export default function Cadastro() {
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
 
       // limpar campos
-      router.replace("/pages/fullcalendar");
+      router.replace("/pages/calendar");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         Alert.alert("Erro", "Email já cadastrado");
@@ -81,11 +80,11 @@ export default function Cadastro() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.form}>
-      //  <Image
-          // source={require("../../assets/logo.png")} // ajusta o caminho
+      {/*<Image
+         source={require("../../assets/logo.png")} // ajusta o caminho
           style={styles.logo}
           resizeMode="contain"
-        />
+        />*/}
         <Text style={styles.titulo}>Criar conta</Text>
 
         <TextInput
@@ -109,8 +108,7 @@ export default function Cadastro() {
           placeholder="Senha"
           value={senha}
           onChangeText={setSenha}
-          secureTextEntry
-        />
+          />
 
         <TextInput
           style={styles.input}

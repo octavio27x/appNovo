@@ -1,6 +1,9 @@
 import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import {
+  Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -8,11 +11,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Image, 
-  Alert,
 } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../banco/firebaseConfig";
+import { auth } from "../banco/firebaseConfig";
 
 
 export default function login() {
@@ -29,7 +29,7 @@ async function fazerLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, senha);
 
-    router.replace("/(tabs)/fullcalendar");
+    router.replace("/pages/calendar");
 
   } catch (error) {
     Alert.alert("Erro no login", "Email ou senha inválidos");

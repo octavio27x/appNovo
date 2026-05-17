@@ -7,8 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "appnovo",
     "userInterfaceStyle": "automatic",
-    
-    "ios": {
+    "ios":{
       "supportsTablet": true
     },
     "android": {
@@ -18,7 +17,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       }
-      
     },
     "web": {
       "output": "static",
@@ -37,7 +35,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
