@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,8 +9,10 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 
+
 export default function CalendarScreen() {
   const [selected, setSelected] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false); // 👈 novo
 
   // 🔹 gerar horários
   const generateTimeSlots = (): string[] => {
@@ -45,6 +48,7 @@ export default function CalendarScreen() {
         <Calendar
           onDayPress={(day: any) => {
             setSelected(day.dateString);
+              setModalVisible(true); 
           }}
           markedDates={{
             [selected]: {
@@ -61,28 +65,59 @@ export default function CalendarScreen() {
         )}
 
         {/* 🔹 SALAS + HORÁRIOS */}
-        <ScrollView style={styles.roomsContainer}>
-          {rooms.map((room) => (
-            <View key={room} style={styles.roomCard}>
-              <Text style={styles.roomTitle}>{room}</Text>
+        <Modal
+         
+  visible={modalVisible}
+  transparent={true}
+  animationType="slide"
+>
+  <View style={styles.dragIndicator} />
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      
+      <Text style={styles.title}>
+        Escolher Sala e Horário
+      </Text>
 
-              <View style={styles.timeGrid}>
-                {generateTimeSlots().map((time) => (
-                  <TouchableOpacity
-                    key={time}
-                    style={styles.timeButton}
-                    onPress={() => {
-                      // 🔹 depois você navega pra outra tela aqui
-                      alert(`${room} - ${time}`);
-                    }}
-                  >
-                    <Text style={styles.timeText}>{time}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+      <Text style={styles.selectedText}>
+        Dia: {selected}
+      </Text>
+
+      <ScrollView>
+        {rooms.map((room) => (
+          <View key={room} style={styles.roomCard}>
+            <Text style={styles.roomTitle}>{room}</Text>
+
+            <View style={styles.timeGrid}>
+              {generateTimeSlots().map((time) => (
+                <TouchableOpacity
+                  key={time}
+                  style={styles.timeButton}
+                  onPress={() => {
+                    alert(`${room} - ${time}`);
+                    setModalVisible(false); // 👈 fecha ao escolher
+                  }}
+                >
+                  <Text style={styles.timeText}>{time}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          ))}
-        </ScrollView>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* botão fechar */}
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => setModalVisible(false)}
+      >
+        <Text style={{ color: "#fff" }}>Fechar</Text>
+      </TouchableOpacity>
+
+    </View>
+  </View>
+</Modal>
+      
       </View>
 
       {/* 🔻 BARRA INFERIOR */}
@@ -184,4 +219,35 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
   },
+  modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.5)",
+  justifyContent: "flex-end",
+  alignItems: "center",
+},
+
+modalContent: {
+  width: "100%",
+  height: "75%",
+  backgroundColor: "#fff",
+  borderTopLeftRadius: 20,
+  borderTopRightRadius: 20,
+  padding: 15,
+},
+
+closeButton: {
+  marginTop: 10,
+  backgroundColor: "#007AFF",
+  padding: 10,
+  borderRadius: 8,
+  alignItems: "center",
+},
+dragIndicator: {
+  width: 40,
+  height: 5,
+  backgroundColor: "#ccc",
+  borderRadius: 3,
+  alignSelf: "center",
+  marginBottom: 10,
+},
 });
